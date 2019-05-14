@@ -1,3 +1,9 @@
+## goals
+## 1. get slackbot working
+    ## set up python virtural env
+    ## in /pycon-2019, run `source .env`
+## 2. feel comfortable exploring API
+
 import json
 import os
 from flask import Flask
@@ -42,6 +48,7 @@ def handle_message(event_data):
 # Echo the user's reaction back in a thread
 @slack_events_adapter.on("reaction_added")
 def reaction_added(event_data):
+    import pdb; pdb.set_trace()
     event = event_data["event"]
 
     channel = event["item"]["channel"]
@@ -56,3 +63,4 @@ def reaction_added(event_data):
 
 
 slack_events_adapter.start(port=3000)
+

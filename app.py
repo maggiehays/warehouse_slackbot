@@ -26,6 +26,20 @@ slack_events_adapter = SlackEventAdapter(
 slack_bot_token = os.environ["SLACK_BOT_TOKEN"]
 slack_client = slack.WebClient(token=slack_bot_token)
 
+definitions = {
+    'apple':'an apple is a red fruit',
+    'orange':'an orange is an orange fruit',
+}
+
+def respond_to_define(message):
+        # "@slackbot define apple"
+        tokens = message['text'].split(' ') #split the text based on string
+        # array of string: ['@dslackbot','define','apple']
+        term = tokens[-1]
+        definition = definitions[term]
+        channel = message["channel"]
+        message = "Hello <@{}>! :tada: The definition of {} is {}".format(message["user"], term, definition)
+        slack_client.chat_postMessage(channel=channel, text=message)
 
 # When someone posts a message saying `hi` to our bot, we'll
 # have the bot respond with "Hello @user! :tada:"
@@ -39,18 +53,27 @@ def handle_message(event_data):
 
     # If the incoming message contains "hi", then respond with a "Hello" message
     # the `subtype` check filters out messages from other bot users.
-    if message.get("subtype") is None and "hi" in message['text']:
+    if message.get("subtype") is None and "define" in message['text']:
+        respond_to_define(message)
+    elif message.get("subtype") is None and "list" in message['text']:
+        # "@slackbot list"
         channel = message["channel"]
-        message = "Hello <@%s>! :tada:" % message["user"]
+        message = "Hello <@{}>! I am very smart. I know the definition of these terms: \n - {}".format(
+            message["user"],
+            "\n - ".join(definitions.keys()), # joins together all subsequent keys, excluding the first key
+        )
+        """
+         - apple
+         - orange    
+        """
         slack_client.chat_postMessage(channel=channel, text=message)
 
 
 # Echo the user's reaction back in a thread
 @slack_events_adapter.on("reaction_added")
 def reaction_added(event_data):
-    import pdb; pdb.set_trace()
-    event = event_data["event"]
-
+    # import pdb; pdb.set_trace() # opens python debugger
+    event = event_data["event"]    
     channel = event["item"]["channel"]
     thread_ts = event['item']['ts']
 
@@ -62,5 +85,5 @@ def reaction_added(event_data):
     slack_client.chat_postMessage(channel=channel, thread_ts=thread_ts, text=text)
 
 
-slack_events_adapter.start(port=3000)
+slack_events_adapter.start(port=3000, debug=True)
 

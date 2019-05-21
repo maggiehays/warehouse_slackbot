@@ -9,6 +9,7 @@ import os
 from flask import Flask
 from slackeventsapi import SlackEventAdapter
 import slack
+from collections import defaultdict # https://stackoverflow.com/questions/9358983/dictionaries-and-default-values
 
 # In order for our application to verify the authenticity
 # of requests from Slack, we'll compare the request signature
@@ -26,19 +27,22 @@ slack_events_adapter = SlackEventAdapter(
 slack_bot_token = os.environ["SLACK_BOT_TOKEN"]
 slack_client = slack.WebClient(token=slack_bot_token)
 
-definitions = {
-    'apple':'an apple is a red fruit',
-    'orange':'an orange is an orange fruit',
-}
+definitions = defaultdict(lambda: "I don't know that term!",
+    apple="an apple is a red fruit",
+    orange="an orange is an orange fruit",
+    )
 
 def respond_to_define(message):
         # "@slackbot define apple"
         tokens = message['text'].split(' ') #split the text based on string
-        # array of string: ['@dslackbot','define','apple']
+        # array of string: ['@slackbot','define','apple']
         term = tokens[-1]
         definition = definitions[term]
         channel = message["channel"]
-        message = "Hello <@{}>! :tada: The definition of {} is {}".format(message["user"], term, definition)
+        if term in definitions.keys():
+            message = "Hello <@{}>! :tada: I know the definition of that term because I am very smart. \n *{}*: {}".format(message["user"], term, definition)
+        else:
+            message = ":frowning: <@{}> you caught me - I don't know that term".format(message["user"])
         slack_client.chat_postMessage(channel=channel, text=message)
 
 # When someone posts a message saying `hi` to our bot, we'll
@@ -51,7 +55,7 @@ def handle_message(event_data):
     # We're logging out the payload so you can see it's anatomy
     print(json.dumps(message, indent=4, sort_keys=True))
 
-    # If the incoming message contains "hi", then respond with a "Hello" message
+    # If the incoming message contains "define", then respond with a "Hello" message
     # the `subtype` check filters out messages from other bot users.
     if message.get("subtype") is None and "define" in message['text']:
         respond_to_define(message)

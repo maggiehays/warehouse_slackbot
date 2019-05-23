@@ -1,35 +1,90 @@
 # running notes
 
+## lets get goin'
 
-from root directory
+### start app from root directory
+
+1. get your virtural environment movin' - make sure you're workin' with pyhton 3
+
 ```
-(slackbot> master) slackbot marhays $ source venv/bin/activate
-(env) 
-(slackbot> master) slackbot marhays $ source .env
+(slackbot> master) slackbot marhays $ source venv/bin/activate 
+```
+
+2. store your slack signing secret & creds into your virturual environment
+
+```
 (env)
-(slackbot> master) slackbot marhays $ pip3 install -r requirements.txt 
-
-
+(slackbot> master) slackbot marhays $ source .env
 ```
 
+missing `.env`? np, we got you.
 
-`sample.env` - when someone else clones this repo, they can run `cp sample.env .env`, then edit `.env` to store values for `SLACK_BOT_TOKEN` and `SLACK_SIGNING_SECRET`, then run `source .env` prior to running `app.py` 
+- run `cp sample.env .env`
+- edit `.env` to store values for `SLACK_BOT_TOKEN` and `SLACK_SIGNING_SECRET`
+- then run `source .env` 
+
+^^ do this prior to running `app.py` 
+
+3. make sure you have your slack-related requirements 
+```
+(env)
+(slackbot> master) slackbot marhays $ pip3 install -r requirements.txt
+```
+
+4. launch time
 
 ```
-(slackbot> master) slackbot marhays $ ls -la
-total 84200
-drwxr-xr-x  14 marhays  120010775       448 May 15 19:48 .
-drwxr-xr-x   8 marhays  120010775       256 May 15 19:49 ..
--rw-r--r--@  1 marhays  120010775      6148 May 15 19:45 .DS_Store
--rw-r--r--   1 marhays  120010775       144 May 13 18:47 .env
-drwxr-xr-x  15 marhays  120010775       480 May 15 19:50 .git
--rw-r--r--   1 marhays  120010775      1226 May 15 19:48 .gitignore
--rw-r--r--@  1 marhays  120010775  12793718 May  2 13:10 Pycon 2019 Workshop.pdf
--rw-r--r--   1 marhays  120010775      1036 May 13 19:29 README.md
--rw-r--r--   1 marhays  120010775      1705 May  2 13:02 README.rst
--rw-r--r--   1 marhays  120010775      2358 May 13 19:44 app.py
--rwxr-xr-x@  1 marhays  120010775  30276260 Apr 24 01:05 ngrok
--rw-r--r--   1 marhays  120010775        41 May  2 13:02 requirements.txt
--rw-r--r--   1 marhays  120010775        97 May 13 18:44 sample.env
-drwxr-xr-x   5 marhays  120010775       160 May 15 19:45 venv
+(env)
+(slackbot> master) slackbot marhays $ python3 app.py 
+ * Tip: There are .env files present. Do "pip install python-dotenv" to use them.
+ * Serving Flask app "slackeventsapi.server" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+ * Running on http://127.0.0.1:3000/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Tip: There are .env files present. Do "pip install python-dotenv" to use them.
+ * Debugger is active!
+ * Debugger PIN: 316-912-199
 ```
+
+### port forward with ngrok & update your slack api Request URL
+
+1. in new tab, start ngrok 
+
+```
+./ngrok http 3000 
+```
+
+should return something like this:
+
+```
+ngrok by @inconshreveable                                                                                                                                                                                   (Ctrl+C to quit)
+                                                                                                                                                                                                                            
+Session Status                online                                                                                                                                                                                        
+Account                       maggie.hays@getbraintree.com (Plan: Free)                                                                                                                                                     
+Update                        update available (version 2.3.29, Ctrl-U to update)                                                                                                                                           
+Version                       2.3.27                                                                                                                                                                                        
+Region                        United States (us)                                                                                                                                                                            
+Web Interface                 http://127.0.0.1:4040                                                                                                                                                                         
+Forwarding                    http://0041a9e0.ngrok.io -> http://localhost:3000                                                                                                                                             
+Forwarding                    https://0041a9e0.ngrok.io -> http://localhost:3000                                                                                                                                            
+                                                                                                                                                                                                                            
+Connections                   ttl     opn     rt1     rt5     p50     p90                                                                                                                                                   
+                              0       0       0.00    0.00    0.00    0.00  
+```
+
+you should only need to care about the `https` forwarding address:
+
+```
+Forwarding                    https://0041a9e0.ngrok.io -> http://localhost:3000                                                                                                                                            
+```
+
+2. update your slackbot Request URL 
+
+head on over to api.slack.com/apps and open up your slack app
+
+Event Supscriptions > change your Request URL to `https://<session_token>.ngrok.io/slack/events`
+
+Once verified, make sure you click **Save Changes**

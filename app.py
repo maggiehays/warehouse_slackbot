@@ -27,17 +27,21 @@ slack_events_adapter = SlackEventAdapter(
 slack_bot_token = os.environ["SLACK_BOT_TOKEN"]
 slack_client = slack.WebClient(token=slack_bot_token)
 
-definitions = defaultdict(lambda: "I don't know that term!",
-    apple="an apple is a red fruit",
-    orange="an orange is an orange fruit",
-    )
+definitions = {
+    'apple':'an apple is a red fruit',
+    'orange':'an orange is an orange fruit',
+    }
+
+# print('known value: apple:', definitions.get('apple'))
+
+# print('unknown value: banana: ', definitions.get('banana', 'oh shit i dont know that'))
 
 def respond_to_define(message):
         # "@slackbot define apple"
         tokens = message['text'].split(' ') #split the text based on string
         # array of string: ['@slackbot','define','apple']
         term = tokens[-1]
-        definition = definitions[term]
+        definition = definitions.get(term, 'oh shit i dont know that')#[term]
         channel = message["channel"]
         if term in definitions.keys():
             message = "Hello <@{}>! :tada: I know the definition of that term because I am very smart. \n *{}*: {}".format(message["user"], term, definition)

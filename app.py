@@ -10,6 +10,8 @@ from flask import Flask
 from slackeventsapi import SlackEventAdapter
 import slack
 from collections import defaultdict # https://stackoverflow.com/questions/9358983/dictionaries-and-default-values
+import yaml
+from yaml import load, dump
 
 # In order for our application to verify the authenticity
 # of requests from Slack, we'll compare the request signature
@@ -32,18 +34,23 @@ definitions = {
     'orange':'an orange is an orange fruit',
     }
 
-# print('known value: apple:', definitions.get('apple'))
+extract_terms = open('definitions.yaml', 'r')    # 'definitions.yaml' contains a single YAML document.
 
+slack_dictionary = yaml.load(extract_terms)
+
+# print('known value: apple:', definitions.get('apple'))
 # print('unknown value: banana: ', definitions.get('banana', 'oh shit i dont know that'))
+
 
 def respond_to_define(message):
         # "@slackbot define apple"
         tokens = message['text'].split(' ') #split the text based on string
         # array of string: ['@slackbot','define','apple']
         term = tokens[-1]
-        definition = definitions.get(term, 'oh shit i dont know that')#[term]
+        # _i think_ definitions.get(term) loads all of the known key values from the dictionary?
+        definition = slack_dictionary.get(term)
         channel = message["channel"]
-        if term in definitions.keys():
+        if term in slack_dictionary.keys():
             message = "Hello <@{}>! :tada: I know the definition of that term because I am very smart. \n *{}*: {}".format(message["user"], term, definition)
         else:
             message = ":frowning: <@{}> you caught me - I don't know that term".format(message["user"])
@@ -68,7 +75,7 @@ def handle_message(event_data):
         channel = message["channel"]
         message = "Hello <@{}>! I am very smart. I know the definition of these terms: \n - {}".format(
             message["user"],
-            "\n - ".join(definitions.keys()), # joins together all subsequent keys, excluding the first key
+            "\n - ".join(slack_dictionary.keys()), # joins together all subsequent keys, excluding the first key
         )
         """
          - apple

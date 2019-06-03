@@ -7,14 +7,14 @@
 1. get your virtural environment movin' - make sure you're workin' with pyhton 3
 
 ```
-(slackbot> master) slackbot marhays $ source venv/bin/activate 
+(slackbot> master) slackbot $ source venv/bin/activate 
 ```
 
 2. store your slack signing secret & creds into your virturual environment
 
 ```
 (env)
-(slackbot> master) slackbot marhays $ source .env
+(slackbot> master) slackbot $ source .env
 ```
 
 missing `.env`? np, we got you.
@@ -28,14 +28,14 @@ missing `.env`? np, we got you.
 3. make sure you have your slack-related requirements 
 ```
 (env)
-(slackbot> master) slackbot marhays $ pip3 install -r requirements.txt
+(slackbot> master) slackbot $ pip3 install -r requirements.txt
 ```
 
 4. launch time
 
 ```
 (env)
-(slackbot> master) slackbot marhays $ python3 app.py 
+(slackbot> master) slackbot $ python3 app.py 
  * Tip: There are .env files present. Do "pip install python-dotenv" to use them.
  * Serving Flask app "slackeventsapi.server" (lazy loading)
  * Environment: production
@@ -63,7 +63,7 @@ should return something like this:
 ngrok by @inconshreveable                                                                                                                                                                                   (Ctrl+C to quit)
                                                                                                                                                                                                                             
 Session Status                online                                                                                                                                                                                        
-Account                       maggie.hays@getbraintree.com (Plan: Free)                                                                                                                                                     
+Account                       <your@email.com> (Plan: Free)                                                                                                                                                     
 Update                        update available (version 2.3.29, Ctrl-U to update)                                                                                                                                           
 Version                       2.3.27                                                                                                                                                                                        
 Region                        United States (us)                                                                                                                                                                            

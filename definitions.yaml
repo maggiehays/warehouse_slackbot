@@ -1,3 +1,43 @@
 apple: an apple is a red fruit!
 orange: an orange is an orange fruit!
 banana: bananas as gross, knock it off
+
+
+- term: apple
+  definition: an apple is a red fruit!
+
+- term: orange
+  definition: an orange is an orange fruit!
+
+- term: banana
+  definition: bananas as gross, knock it off
+
+# list of dictionaries
+# [
+#   { term: apple, definition: 'red fruit'},
+#   { term: banana, definition: 'gross fruit'},
+#   { term: orange, definition: 'orange fruit'},
+# ]
+
+# lookup would be slack_dictionary[0] [t for t in slack_dictionary if t[term] == 'apple'][0]
+
+apple:
+  definition: an apple is a red fruit!
+  emoji: apple
+
+orange:
+  definition: an orange is an orange fruit!
+  emoji: orange
+
+banana:
+  definition: bananas as gross, knock it off
+  emoji: person_frowning
+
+# dictionary of dictionaries
+# {
+#   apple: {definition: 'red fruit'},
+#   banana: {definition: 'gross fruit'},
+#   orange: {definition: 'orange fruit'},
+# }
+
+# lookup would be slack_dictionary[apple]

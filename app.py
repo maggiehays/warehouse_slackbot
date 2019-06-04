@@ -11,7 +11,6 @@ from slackeventsapi import SlackEventAdapter
 import slack
 from collections import defaultdict # https://stackoverflow.com/questions/9358983/dictionaries-and-default-values
 import yaml
-from yaml import load, dump
 
 # In order for our application to verify the authenticity
 # of requests from Slack, we'll compare the request signature
@@ -29,28 +28,19 @@ slack_events_adapter = SlackEventAdapter(
 slack_bot_token = os.environ["SLACK_BOT_TOKEN"]
 slack_client = slack.WebClient(token=slack_bot_token)
 
-definitions = {
-    'apple':'an apple is a red fruit',
-    'orange':'an orange is an orange fruit',
-    }
-
 extract_terms = open('definitions.yaml', 'r')    # 'definitions.yaml' contains a single YAML document.
 
 slack_dictionary = yaml.load(extract_terms)
-
-# print('known value: apple:', definitions.get('apple'))
-# print('unknown value: banana: ', definitions.get('banana', 'oh shit i dont know that'))
-
 
 def respond_to_define(message):
         # "@slackbot define apple"
         tokens = message['text'].split(' ') #split the text based on string
         # array of string: ['@slackbot','define','apple']
         term = tokens[-1]
+        channel = message["channel"]
         # _i think_ definitions.get(term) loads all of the known key values from the dictionary?
         definition = slack_dictionary.get(term)
-        channel = message["channel"]
-        if term in slack_dictionary.keys():
+        if definition:
             message = "Hello <@{}>! :tada: I know the definition of that term because I am very smart. \n *{}*: {}".format(message["user"], term, definition)
         else:
             message = ":frowning: <@{}> you caught me - I don't know that term".format(message["user"])

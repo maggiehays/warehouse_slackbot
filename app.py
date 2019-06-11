@@ -24,6 +24,8 @@ slack_events_adapter = SlackEventAdapter(
 )
 
 PORT = os.environ.get('PORT', 3000)
+DEBUG = os.environ.get('DEBUG', False)
+
 # Create an instance of SlackClient for your bot to make Web API requests,
 # passing your app's Bot Token.
 slack_bot_token = os.environ["SLACK_BOT_TOKEN"]
@@ -33,7 +35,7 @@ extract_terms = open('definitions.yaml', 'r')    # 'definitions.yaml' contains a
 
 slack_dictionary = yaml.load(extract_terms)
 
-print(yaml.dump(slack_dictionary))
+# print(yaml.dump(slack_dictionary))
 # apple:
 #   definition: an apple is a red fruit!
 #   emoji: apple
@@ -110,5 +112,5 @@ def reaction_added(event_data):
     slack_client.chat_postMessage(channel=channel, thread_ts=thread_ts, text=text)
 
 
-slack_events_adapter.start(port=PORT, debug=True)
+slack_events_adapter.start(port=PORT, debug=DEBUG, host='0.0.0.0')
 

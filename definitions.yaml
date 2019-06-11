@@ -1,16 +1,16 @@
-apple: an apple is a red fruit!
-orange: an orange is an orange fruit!
-banana: bananas as gross, knock it off
+# apple: an apple is a red fruit!
+# orange: an orange is an orange fruit!
+# banana: bananas as gross, knock it off
 
 
-- term: apple
-  definition: an apple is a red fruit!
+# - term: apple
+#   definition: an apple is a red fruit!
 
-- term: orange
-  definition: an orange is an orange fruit!
+# - term: orange
+#   definition: an orange is an orange fruit!
 
-- term: banana
-  definition: bananas as gross, knock it off
+# - term: banana
+#   definition: bananas as gross, knock it off
 
 # list of dictionaries
 # [

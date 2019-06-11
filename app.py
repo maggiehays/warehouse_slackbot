@@ -23,6 +23,7 @@ slack_events_adapter = SlackEventAdapter(
   endpoint="/slack/events"
 )
 
+PORT = os.environ.get('PORT', 3000)
 # Create an instance of SlackClient for your bot to make Web API requests,
 # passing your app's Bot Token.
 slack_bot_token = os.environ["SLACK_BOT_TOKEN"]
@@ -32,6 +33,24 @@ extract_terms = open('definitions.yaml', 'r')    # 'definitions.yaml' contains a
 
 slack_dictionary = yaml.load(extract_terms)
 
+print(yaml.dump(slack_dictionary))
+# apple:
+#   definition: an apple is a red fruit!
+#   emoji: apple
+# banana:
+#   definition: bananas as gross, knock it off
+#   emoji: person_frowning
+# orange:
+#   definition: an orange is an orange fruit!
+#   emoji: orange
+
+# tokens = 'define apple'.split(' ')
+# term = tokens[-1]
+# definition = slack_dictionary[term]['definition']
+# print(definition)
+
+
+# message = "Hello <@{}>! :tada: I know the definition of that term because I am very smart. \n *{}*: {}".format(message["user"], term, definition)
 def respond_to_define(message):
         # "@slackbot define apple"
         tokens = message['text'].split(' ') #split the text based on string
@@ -39,7 +58,8 @@ def respond_to_define(message):
         term = tokens[-1]
         channel = message["channel"]
         # _i think_ definitions.get(term) loads all of the known key values from the dictionary?
-        definition = slack_dictionary.get(term)
+        # definition = slack_dictionary.get(term)
+        definition = slack_dictionary[term]['definition']
         if definition:
             message = "Hello <@{}>! :tada: I know the definition of that term because I am very smart. \n *{}*: {}".format(message["user"], term, definition)
         else:
@@ -90,5 +110,5 @@ def reaction_added(event_data):
     slack_client.chat_postMessage(channel=channel, thread_ts=thread_ts, text=text)
 
 
-slack_events_adapter.start(port=3000, debug=True)
+slack_events_adapter.start(port=PORT, debug=True)
 

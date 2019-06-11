@@ -111,6 +111,9 @@ def reaction_added(event_data):
     text = ":{}:".format(emoji_name)
     slack_client.chat_postMessage(channel=channel, thread_ts=thread_ts, text=text)
 
+@slack_events_adapter.server.route("/")
+def home():
+    return "Wassup I'm the waremouse"
 
 slack_events_adapter.start(port=PORT, debug=DEBUG, host='0.0.0.0')
 

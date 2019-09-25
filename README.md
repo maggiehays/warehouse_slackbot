@@ -91,3 +91,8 @@ head on over to api.slack.com/apps and open up your slack app
 Event Supscriptions > change your Request URL to `https://<session_token>.ngrok.io/slack/events`
 
 Once verified, make sure you click **Save Changes**
+
+## Setting up Looker API
+
+1. follow install instructions to generate `looker.ini` https://pypi.org/project/looker-sdk/
+2. run `looker_example.py` to ensure API creds and API base URL are working

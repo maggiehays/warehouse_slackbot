@@ -21,6 +21,9 @@ missing `.env`? np, we got you.
 
 - run `cp sample.env .env`
 - edit `.env` to store values for `SLACK_BOT_TOKEN` and `SLACK_SIGNING_SECRET`
+  - you'll find these in your app configuration api.slack.com/apps/ 
+  - `SLACK_BOT_TOKEN` can be found in **OAuth & Permissions > Bot User OAuth Access Token**
+  - `SLACK_SIGNING_SECRET` can be found in **Basic Information > Signing Secret**
 - then run `source .env` 
 
 ^^ do this prior to running `app.py` 

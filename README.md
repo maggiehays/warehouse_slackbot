@@ -96,3 +96,16 @@ Once verified, make sure you click **Save Changes**
 
 1. follow install instructions to generate `looker.ini` https://pypi.org/project/looker-sdk/
 2. run `looker_example.py` to ensure API creds and API base URL are working
+
+
+## Writing output to BigQuery
+
+Configure BigQuery Cloud Platform https://cloud.google.com/bigquery/docs/quickstarts/quickstart-client-libraries
+
+- Install client library `pip install --upgrade google-cloud-bigquery`
+
+- Set environment variable (should already be done in the setting up `.env`)
+
+`export GOOGLE_APPLICATION_CREDENTIALS="[PATH]"` -- this can also be added 
+
+

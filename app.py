@@ -11,6 +11,12 @@ from slackeventsapi import SlackEventAdapter
 import slack
 from collections import defaultdict # https://stackoverflow.com/questions/9358983/dictionaries-and-default-values
 import yaml
+from looker_sdk import client, models, error
+import pprint
+
+sdk = client.setup("looker.ini")
+looker_api_user = sdk.me()
+
 
 # In order for our application to verify the authenticity
 # of requests from Slack, we'll compare the request signature
@@ -35,33 +41,71 @@ extract_terms = open('definitions.yaml', 'r')    # 'definitions.yaml' contains a
 
 slack_dictionary = yaml.load(extract_terms)
 
-# print(yaml.dump(slack_dictionary))
-# apple:
-#   definition: an apple is a red fruit!
-#   emoji: apple
-# banana:
-#   definition: bananas as gross, knock it off
-#   emoji: person_frowning
-# orange:
-#   definition: an orange is an orange fruit!
-#   emoji: orange
 
-# tokens = 'define apple'.split(' ')
-# term = tokens[-1]
-# definition = slack_dictionary[term]['definition']
-# print(definition)
+class Dictionary:
+    def __init__(self):
+        self.fields = []
+        raw_models = sdk.all_lookml_models()
+        for model in raw_models:
+            for explore in model.explores:
+                raw_explore = sdk.lookml_model_explore(model.name, explore.name)
+                explore_name = raw_explore.name
+                explore_label = raw_explore.label
+                for dimension in raw_explore.fields.dimensions:
+                    if dimension.description == None:
+                        continue
+                    else:
+                        self.fields.append(
+                            {
+                                "field": dimension.name,
+                                "field_label": dimension.label,
+                                "field_short_label": dimension.label_short,
+                                "field_description": dimension.description,
+                                "explore": explore_name,
+                                "explore_label": explore_label,
+                                "type": dimension.category
+                            }
+                        )
+    def get_description(self, token):
+        explore = token.split('.')[0]
+        field = token.split('.')[-1]
+        description = "No Description Found"
+        for f in self.fields:
+            if f['explore_label'].lower() == explore.lower() and f['field_label'].lower() == field.lower():
+                description = f['field_description']
+                break
+            else:
+                continue
+        return description
+    def list_terms(self, explore = "all"):
+        list = []
+        if explore == "all":
+            for f in self.fields:
+                list.append(f['explore_label']+"."+f['field_label'])
+        else:
+            for f in self.fields:
+                if f['explore_label'].lower() == explore.lower():
+                    list.append(f['explore_label']+"."+f['field_label'])
+        return list
 
+definitions = Dictionary()
+
+# definition_tokens = definitions.split('.')
+
+# "text": "<@UNC9BFKA6> define apple",
 
 # message = "Hello <@{}>! :tada: I know the definition of that term because I am very smart. \n *{}*: {}".format(message["user"], term, definition)
 def respond_to_define(message):
         # "@slackbot define apple"
-        tokens = message['text'].split(' ') #split the text based on string
+        # @slackbot 'Relationships.Killed House'
+        # import pdb; pdb.set_trace() # opens python debugger
+        tokens = message['text'].split('define ') #split the text based on string
         # array of string: ['@slackbot','define','apple']
         term = tokens[-1]
         channel = message["channel"]
         # _i think_ definitions.get(term) loads all of the known key values from the dictionary?
         # definition = slack_dictionary.get(term)
-        definition = slack_dictionary[term]['definition']
+        definition = definitions.get_description(term) #slack_dictionary[term]['definition']
         if definition:
             message = "Hello <@{}>! :tada: I know the definition of that term because I am very smart. \n *{}*: {}".format(message["user"], term, definition)
         else:

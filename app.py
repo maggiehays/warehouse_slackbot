@@ -129,15 +129,27 @@ def handle_message(event_data):
     elif message.get("subtype") is None and "list" in message['text']:
         # "@slackbot list"
         channel = message["channel"]
-        message = "Hello <@{}>! I am very smart. I know the definition of these terms: \n - {}".format(
-            message["user"],
-            "\n - ".join(slack_dictionary.keys()), # joins together all subsequent keys, excluding the first key
-        )
-        """
-         - apple
-         - orange    
-        """
-        slack_client.chat_postMessage(channel=channel, text=message)
+        try:
+            if len(message['text'].split('list ')[1]) > 0:
+                message = "Hello <@{}>! I am very smart. I know the definition of these terms: \n - {}".format(
+                message["user"], "\n - ".join(definitions.list_terms(message['text'].split('list ')[1]))
+                # "\n - ".join(slack_dictionary.keys()), # joins together all subsequent keys, excluding the first key
+                )
+            """
+             - apple
+             - orange    
+            """
+            slack_client.chat_postMessage(channel=channel, text=message)
+        except:    
+            message = "Hello <@{}>! I am very smart. I know the definition of these terms: \n - {}".format(
+                message["user"], "\n - ".join(definitions.list_terms())
+                # "\n - ".join(slack_dictionary.keys()), # joins together all subsequent keys, excluding the first key
+            )
+            """
+             - apple
+             - orange    
+            """
+            slack_client.chat_postMessage(channel=channel, text=message)
 
 
 # Echo the user's reaction back in a thread
